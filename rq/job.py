@@ -1,5 +1,6 @@
 import importlib
 import inspect
+import sys
 import times
 from collections import namedtuple
 from uuid import uuid4
@@ -130,7 +131,12 @@ class Job(object):
             return getattr(self.instance, func_name)
 
         module_name, func_name = func_name.rsplit('.', 1)
-        module = importlib.import_module(module_name)
+
+        if module_name in sys.modules:
+            module = sys.modules[module_name]
+        else:
+            module = importlib.import_module(module_name)
+
         return getattr(module, func_name)
 
     @property
